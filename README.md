@@ -1,6 +1,218 @@
 # Codecademy
  Various projects from my codecademy coursework/certification. Note that the code is demonstrative, and not meant to be completely functional.
 
+# CSS
+See the Specificity section below for best practices on which style to use.
+
+CSS can be applied as either a ruleset or inline. Both contain declarations, which are at the core of CSS. They apply a style to the selected 
+element. For example, selecting the `<p>` element and styling it in blue is shown in the two methods below.
+
+CSS Ruleset:
+```
+p {
+    color: blue;
+}
+```
+
+CSS Inline (Adding CSS code directly into HTML, Not Best Practice but good to Know):
+```
+<p style='color: blue;'>Hello World!</p>
+<p style='color: red; font-size: 20px;'>I'm learning to code!</p>
+```
+
+HTML allows you to write CSS code in its own dedicated section with a `<style>` element nested inside of the `<head>` element.
+The CSS code inside the `<style>` element is often referred to as an internal stylesheet. Internal stylesheets are still not best practice.
+
+Internal Stylesheet in an HTML documents, this changes the color of all paragraph text to red and size of text to 20 pixels:
+```
+<head>
+  <style>
+    p {
+      color: red;
+      font-size: 20px;
+    }
+  </style>
+</head>
+```
+
+## Dont Mix CSS and HTML
+If possible, at least. Store HTML and CSS in separate files using an external stylesheet `.css`, usually called `style.css`.
+
+## Linking a CSS File
+You can use the `<link>` element to link HTML and CSS files together. The `<link>` must be placed in the header of the HTML file.
+It is a self-closing tag that requires the following:
+
+* `href`: like the anchor element, the value of this attribute must be the address, or path, to the CSS file.
+* `rel`: this attribute describes the relationship between the HTML file and the CSS file. Because you are linking to a stylesheet, the value should be set to stylesheet.
+
+Example using URL:
+```
+<link href='https://www.codecademy.com/stylesheets/style.css' rel='stylesheet'>
+```
+
+Example using relative path to local file:
+```
+<link href='./style.css' rel='stylesheet'>
+```
+
+## CSS Ruleset Terms
+* Selector: The beginning of the ruleset used to target the element that will be styled.
+* Declaration Block: The code in-between (and including) the curly braces (`{ }`) that contains the CSS declaration(s).
+* Declaration: The group name for a property and value pair that applies a style to the selected element.
+* Property: The first part of the declaration that signifies what visual characteristic of the element is to be modified.
+* Value: The second part of the declaration that signifies the value of the property.
+
+## CSS Inline Terms
+* Opening Tag: The start of an HTML element. This is the element that will be styled.
+* Attribute: The style attribute is used to add CSS inline styles to an HTML element.
+* Declaration: The group name for a property and value pair that applies a style to the selected element.
+* Property: The first part of the declaration that signifies what visual characteristic of the element is to be modified.
+* Value: The second part of the declaration that signifies the value of the property.
+
+## Selectors
+### Type
+Type select selects all elements of a given type:
+```
+p {
+    ...
+}
+h1 {
+    ...
+}
+
+etc.
+```
+
+### Universal
+Universal selector selects all elements of any type. Useful for resetting default browser styling or selecting all children of a
+parent element:
+```
+* {
+    ...
+}
+```
+
+### Class
+CSS is not limited to selecting elements by type; you can also select using the `class` HTML attribute. 
+To select an HTML element by its class using CSS, a period (`.`) must be prepended to the class’s name. In HTML:
+```
+<p class='brand'>Sole Shoe Company</p>
+```
+
+In the CSS stylesheet, to access the `brand` class:
+```
+.brand {
+
+}
+```
+
+You can also add more than one class name to an HTML's `class` attribute by separating them with a space:
+```
+.green {
+  color: green;
+}
+ 
+.bold {
+  font-weight: bold;
+}
+
+<h1 class='green bold'> ... </h1>
+```
+
+### ID
+You can also select a single element of HTML for styling using the ID attribute `id`. Prepend with `#` in the stylesheet.
+Single value, once per page:
+```
+#article-title {
+  font-family: cursive;
+}
+
+<h1 id='article-title'> ... </h1>
+```
+
+### Attribute
+The attribute selector can be used to target HTML elements that already contain certain attributes (or attribute values).
+
+Basic syntax:
+```
+[href]{
+   color: magenta;
+}
+```
+
+Has some attribute value string parsing capabilities:
+```
+img[src*='winter'] {
+  height: 50px;
+}
+ 
+img[src*='summer'] {
+  height: 100px;
+}
+
+<img src='/images/seasons/cold/winter.jpg'>
+<img src='/images/seasons/warm/summer.jpg'>
+```
+
+### Pseudo Class
+When elements change due to user interaction. Examples are `:focus`, `:visited`, `:disabled`, and `:active`.
+A pseudo-class can be attached to any selector and is always written as a colon `:` followed by a name.
+In the following code, when the mouse hovers over a paragraph element it will have a lime-colored background.
+```
+p:hover {
+    background-color: lime;
+}
+```
+
+### Specificity
+The order by which the browser decides which CSS styles will be displayed.
+
+To make styles easy to edit, it’s best to style with a type selector, if possible. If not, add a class selector. If that is not specific enough, then consider using an ID selector.
+
+The 'most specific' selector will win if an element has multiple types of selectors.
+
+### Chaining
+When writing CSS rules, it’s possible to require an HTML element to have two or more CSS selectors at the same time.
+This is done by combining multiple selectors.
+
+For example, if there was a `special` class for `<h1>` elements:
+```
+h1.special {
+ 
+}
+```
+
+### Applying Style to Descendant Elements
+In addition to chaining selectors to select elements, CSS also supports selecting elements that are nested within other HTML elements, also known as descendants.
+```
+<ul class='main-list'>
+  <li> ... </li>
+  <li> ... </li>
+  <li> ... </li>
+</ul>
+```
+
+The nested `<li>` elements are descendants of the `<ul>` element and can be selected with the descendant combinator like so:
+```
+.main-list li {
+ 
+}
+```
+In other words:
+```
+parent-selector descendant-selector {
+  declaration
+}
+```
+
+### Applying Style to Multiple Elements
+Use a comma to separate:
+```
+li,h5 {
+  font-family: monospace;
+}
+```
+
 # PHP in HTML
 You can embed PHP scripts into HTML documents with the opening tag `<?php` and closing tag `?>`. Use the `.php` extension instead of the `.html` extension.
 
