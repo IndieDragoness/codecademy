@@ -226,8 +226,17 @@ h1 {
 ```
 
 ## Box Model
+The box model; it may be preferable to use the model below this model (border-box model).
 ![Box Model](https://content.codecademy.com/courses/freelance-1/unit-4/diagram-boxmodel.svg)
 
+## Border-box Model
+Can avoid the dimensional issues that exist in the box model. To reset to the below model, use:
+```
+* {
+  box-sizing: border-box;
+}
+```
+![Border-box Model](https://content.codecademy.com/courses/web-101/htmlcss1-diagram__borderbox.svg)
 
 # PHP in HTML
 You can embed PHP scripts into HTML documents with the opening tag `<?php` and closing tag `?>`. Use the `.php` extension instead of the `.html` extension.
