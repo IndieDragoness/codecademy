@@ -238,6 +238,9 @@ Can avoid the dimensional issues that exist in the box model. To reset to the be
 ```
 ![Border-box Model](https://content.codecademy.com/courses/web-101/htmlcss1-diagram__borderbox.svg)
 
+# Chrome DevTools
+Check out [this link](https://www.codecademy.com/courses/learn-css/articles/f1-devtools-box-model)
+
 # PHP in HTML
 You can embed PHP scripts into HTML documents with the opening tag `<?php` and closing tag `?>`. Use the `.php` extension instead of the `.html` extension.
 
