@@ -238,6 +238,280 @@ Can avoid the dimensional issues that exist in the box model. To reset to the be
 ```
 ![Border-box Model](https://content.codecademy.com/courses/web-101/htmlcss1-diagram__borderbox.svg)
 
+## Flow of HTML
+A browser renders things left to right, top to bottom, in the same order they exist in the HTML document.
+In addition to style properties, there's positional properties (where elements are located on a page).
+Each of these properties allow us to position and view elements on a web page.
+
+### Position
+The default position of an element can be changed by setting its position property. The position property can take one of five values:
+1. `static`: Default value (Does not need to be specified)
+2. `relative`: Set it relative to it's default `static` position.
+3. `absolute`: All other elements on the page ignore the element and act like it's not present.
+4. `fixed`: Set a position on the page regardless of a user scrolling.
+5. `sticky`: The `sticky` value is another position value that keeps an element in the document flow as the user scrolls, but sticks to a specified position as the page is scrolled further. This is done by using the `sticky` value along with the familiar offset properties, as well as one new one.
+6. `z-index`: Controls the 'Depth', causing some elements to be visible over others when overlapping. `position` must NOT be `static` or this doesn't work.
+7. `display:` `inline`: Default `display` for some elements , such as `<em>`, `<strong>`, and `<a>` is called `inline`. `inline` elements cannot be modified height/width.
+8. `display:` `block`: Some elements (`block`) are not displayed in the same line as the content around them. Fill entire width of page by default, but `width` can be set.
+9. `display:` `inline-block`: Combines `inline` and `block`, can appear next to each other, and can be specified with `width` & `height`.
+10. `float`: As far left or as far right in a container, use `float`. Useful for wrapping text around an image. `left` and `right` are options.
+11. `clear`: Specifies how elements should behave when they bump into each other on the page. `left` (left side of element won't touch), `right`, `both`, `none` (element can touch either side).
+
+Offset Properties (Specified in pixels, ems, or percentages, among others) used with `relative`:
+1. `top`: Moves the element down from the top.
+2. `bottom`: Moves the element up from the bottom.
+3. `left`: Moves the element away from the left side (to the right).
+4. `right`: Moves the element away from the right side (to the left).
+
+Example: Using `relative` from the `top` by `40px` would be:
+```
+position: relative;
+top: 40px;
+```
+
+Example: Using `absolute` with `100%` `width`:
+```
+position: absolute;
+width: 100%;
+```
+
+Example: Using `fixed` with `top` being `0px` and `left` being `0px`:
+```
+.title {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+}
+```
+
+Example: Using `sticky`:
+```
+position: sticky;
+```
+
+## Colors
+### Foreground versus Background
+Foreground color is the color that an element appears in.
+For example, when a heading is styled to appear green, the foreground color of the heading has been styled.
+
+Conversely, when a heading is styled so that its background appears yellow, the background color of the heading has been styled
+
+`color`: This property styles an element’s foreground color.
+`background-color`: This property styles an element’s background color.
+
+### Hexadecimal
+Examples:
+```
+darkseagreen: #8FBC8F
+sienna:       #A0522D
+saddlebrown:  #8B4513
+brown:        #A52A2A
+black:        #000000 or #000
+white:        #FFFFFF or #FFF
+aqua:         #00FFFF or #0FF
+```
+
+### RGB Values
+```
+h1 {
+  color: rgb(23, 45, 23);
+}
+```
+
+### Hue, Saturation, and Lightness
+The syntax for HSL is similar to the decimal form of RGB, though it differs in important ways.
+The first number represents the degree of the hue, and can be between 0 and 360.
+The second and third numbers are percentages representing saturation and lightness respectively.
+Here is an example:
+```
+color: hsl(120, 60%, 70%);
+```
+
+Hue is the first number. It refers to an angle on a color wheel.
+Red is 0 degrees, Green is 120 degrees, Blue is 240 degrees, and then back to Red at 360.
+
+Saturation refers to the intensity or purity of the color. The saturation increases towards 100% as the color becomes richer.
+The saturation decreases towards 0% as the color becomes grayer.
+
+Lightness refers to how light or dark the color is.
+Halfway, or 50%, is normal lightness.
+Imagine a sliding dimmer on a light switch that starts halfway.
+Sliding the dimmer up towards 100% makes the color lighter, closer to white.
+Sliding the dimmer down towards 0% makes the color darker, closer to black.
+
+### Opacity and Alpha
+To use opacity in the HSL color scheme, use `hsla` instead of `hsl`, and four values instead of three.
+For example:
+```
+color: hsla(34, 100%, 50%, 0.1);
+```
+
+The RGB color scheme has a similar syntax for opacity, rgba.
+Again, the first three values work the same as rgb and the last value is the alpha. Here’s an example:
+```
+color: rgba(234, 45, 98, 0.33);
+```
+
+Keyword for zero opacity:
+```
+color: transparent;
+```
+
+## Typography
+The art of arranging text on page.
+1. How to style and transform fonts.
+2. How to lay text out on a page.
+3. How to add external fonts to your web pages.
+
+### Font Family
+Example:
+```
+h1 {
+  font-family: Arial;
+}
+```
+```
+h1 {
+  font-family: 'Times New Roman';
+}
+```
+
+### Web Safe Fonts
+There is a selection of fonts that will appear the same across all browsers and operating systems.
+These fonts are referred to as web safe fonts: https://www.cssfontstack.com/
+
+### Fallback Fonts and Font Stacks
+Web safe fonts are good fallback fonts that can be used if your preferred font is not available.
+```
+h1 {
+  font-family: Caslon, Georgia, 'Times New Roman';
+}
+```
+In the example above, Georgia and Times New Roman are fallback fonts to Caslon.
+
+### Serif and Sans-Serif
+Serif fonts have extra details on the ends of each letter, as opposed to Sans-Serif fonts, which do not have the extra details.
+Serif and sans-serif are also keyword values that can be added as a final fallback font if nothing else in the font stack is available.
+```
+h1 {
+  font-family: Caslon, Georgia, 'Times New Roman', serif;
+}
+```
+
+### Font Weight
+The `font-weight` property can take any one of these keyword values:
+1. `bold`: Bold font weight.
+2. `normal`: Normal font weight. This is the default value.
+3. `lighter`: One font weight lighter than the element’s parent value.
+4. `bolder`: One font weight bolder than the element’s parent value
+
+Numerical values can range from 1 (lightest) to 1000 (boldest), but it is common practice to use increments of 100.
+A font weight of 400 is equal to the keyword value normal, and a font weight of 700 is equal to bold.
+```
+.left-section {
+  font-weight: 700;
+}
+ 
+.right-section {
+  font-weight: bold; 
+}
+```
+
+### Font Style
+You can also italicize text with the `font-style` property.
+```
+h3 {
+  font-style: italic;
+}
+```
+
+### Text Transformation
+Text can also be styled to appear in either all uppercase or lowercase with the `text-transform` property.
+```
+h1 {
+  text-transform: uppercase;
+}
+```
+
+### Text Layout
+* `letter-spacing`: Used to set the horizontal spacing between the individual characters in an element.
+```
+p {
+  letter-spacing: 2px;
+}
+```
+
+* `word-spacing`: Set the space between words. For word spacing, using em values are recommended because the spacing can be set based on the size of the font.
+```
+h1 {
+  word-spacing: 0.3em;
+}
+```
+
+* `line-height`: How tall we want each line containing our text to be. Line height values can be a unitless number, such as `1.2`, or a length value, such as `12px`, `5%` or `2em`. Generally, the unitless value is preferred since it is responsive based on the current font size.
+```
+p {
+  line-height: 1.4;
+}
+```
+
+* `text-align`: Aligns text to its parent element.
+```
+h1 {
+  text-align: right;
+}
+```
+
+### Web Fonts
+Free font services, like [Google Fonts](https://fonts.google.com/) and [Adobe Fonts](https://fonts.adobe.com/), host fonts that you can link to from your HTML document with a provided `<link>` element.
+
+You can also use fonts from paid font distributors like [fonts.com](https://www.fonts.com/) by downloading and hosting them with the rest of your site’s files.
+You can create a `@font-face` ruleset in your CSS stylesheet to link to the relative path of the font file.
+
+Web Fonts Using `<link>` via Google Fonts:
+```
+<head>
+  <!-- Add the link element for Google Fonts along with other metadata -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap" rel="stylesheet">
+<head>
+```
+The generated <link> element needs to be added to the `<head>` element in your HTML document for it to be ready to be used in your CSS.
+
+### Web Fonts Using @font-face and Downloaded Fonts
+Fonts can also be added using a `@font-face` ruleset in your CSS stylesheet instead of using a <link> element in your HTML document.
+
+Font Formats (For reference):
+1. OTF (OpenType Font)
+2. TTF (TrueType Font)
+3. WOFF (Web Open Font Format)
+4. WOFF2 (Web Open Font Format 2)
+
+The different formats are a progression of standards for how fonts will work with different browsers, with WOFF2 being the most progressive.
+It’s a good idea to include TTF, WOFF, and WOFF2 formats with your @font-face rule to ensure compatibility on all browsers.
+
+You can use a tool such as [Google Web Fonts Helper] to generate additional file types for WOFF and WOFF2.
+
+When you have the files you need, move them to a folder inside your website’s working directory, and you’re ready to use them in a `@font-face` ruleset.
+
+```
+@font-face {
+  font-family: 'MyParagraphFont';
+  src: url('fonts/Roboto.woff2') format('woff2'),
+       url('fonts/Roboto.woff') format('woff'),
+       url('fonts/Roboto.ttf') format('truetype');
+}
+```
+1. The `@font-face` at-rule is used as the `selector`. It’s recommended to define the `@font-face` ruleset at the top of your CSS stylesheet.
+2. Inside the declaration block, the `font-family` property is used to set a custom name for the downloaded font. The name can be anything you choose, but it must be surrounded by quotation marks. In the example, the font is named `'MyParagraphFont'`, as this font will be used for all paragraphs.
+3. The `src` property contains three values, each specifying the relative path to the font file and its format. In this example, the font files are stored inside a folder named fonts within the working directory.
+
+Once it's defined, you can use it:
+```
+p {
+  font-family: 'MyParagraphFont', sans-serif;
+}
+```
+
 # Chrome DevTools
 Check out [this link](https://www.codecademy.com/courses/learn-css/articles/f1-devtools-box-model)
 
@@ -419,6 +693,10 @@ $items = "I brought apples";
 echo AdamsUtils::$the_answer;
 echo AdamsUtils::addTowel($items);
 ```
+
+# JavaScript
+## Console
+In JavaScript, the `console` keyword refers to an object, a collection of data and actions, that we can use in our code.
 
 # Definitions
 1. Front-end: The portion of the website that is sent to the user/users browser. The 'Store front'. The front-end of a website consists of JavaScript, CSS, HTML, images, and other static assets sent to the client.
