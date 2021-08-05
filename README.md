@@ -1621,15 +1621,536 @@ npm run build
 
 A separate copy of the file will be created in the older `ES5` syntax.
 
-# Definitions
-1. Front-end: The portion of the website that is sent to the user/users browser. The 'Store front'. The front-end of a website consists of JavaScript, CSS, HTML, images, and other static assets sent to the client.
-2. Client: When we navigate to a website the browser is the client, and it sends a request to the back-end for all the assets needed to view and interact with the website.
-3. Back-end: The portion of the website that supports operations requested by the front-end. The back-end consists of a web server and all the logic and data needed to create and maintain a website or web application.
-4. Web Server (Back-end): a web server is a computer or program which listens for requests from clients and sends back responses. This component is well suited to handling delivery of static content.
-5. Application Server (Back-end): this is actually often a collection of programming logic which is needed to deliver dynamic content to a client. The application server will often handle other tasks such as site security and interacting with data.
-6. Data Base (Back-end): important information like usernames and passwords has to be stored and accessed somewhere. A large web application will often have multiple databases to store all different types of data needed to run the site smoothly.
-7. PHP (Back-end): PHP is a back-end language. PHP can be used to generate HTML files. We embed PHP scripts within HTML by inserting PHP code between the opening (`<?php`) and closing (`?>`) tags. Presenting and interacting with HTML is one of the primary uses of PHP.
+## JavaScript Project
+Several files can be involved, `index.html`, `main.js`, etc.
+
+### Exporting
+One of the tools for connecting files is `export`:
+```
+export { valueA, valueB, valueC };
+export default valueD;
+```
+
+## Asynchronicity and Promises
+Promises are objects that represent the eventual outcome of an asynchronous operation. A `Promise` object can be in one of three states:
+1. Pending: The initial state; the operation has not completed yet.
+2. Fulfilled: The operation has completed successfully and the promise now has a resolved value. For example, a request's promise might resolve with a JSON object as its value.
+3. Rejected: The operation has failed and the promise has a reason for the failture. This reason is usually an `Error` of some kind.
+
+We refer to a promise as settled if it is no longer pending; it is either fulfilled or rejected.
+
+### Constructing a Promise Object
+The `Promise` constructor method takes a function parameter called the executor function which runs automatically when the constructor is called.
+The executor function generally starts an asynchronous operation and dictates how the promise should be settled.
+The executor function has two function parameters, usually referred to as the `resolve()` and `reject()` functions; these two aren't defined by the programmer.
+When the `Promise` constructor runs, JavaScript will pass its own `resolve()` and `reject()` functions into the executor function.
+
+1. `resolve` is a function with one argument. Under the hood, if invoked, `resolve()` will change the promise’s status from `pending` to `fulfilled`, and the promise’s resolved value will be set to the argument passed into `resolve()`.
+2. `reject` is a function that takes a reason or error as an argument. Under the hood, if invoked, `reject()` will change the promise’s status from `pending` to `rejected`, and the promise’s rejection reason will be set to the argument passed into `reject()`.
+
+Example executor function:
+```
+const executorFunction = (resolve, reject) => {
+  if (someCondition) {
+      resolve('I resolved!');
+  } else {
+      reject('I rejected!'); 
+  }
+}
+const myFirstPromise = new Promise(executorFunction);
+```
+
+Breaking down what's happening above:
+1. Declare a variable `myFirstPromise`.
+2. `myFirstPromise is constructed using `new Promise()` which is the `Promise` constructor method.
+3. `executorFunction()` is passed to the constructor and has two functions as parameters: `resolve` and `reject`.
+4. If `someCondition` evaluates to `true`, we invoke `resolve()` with the string `I resolved!`.
+5. If not, we invoke `reject()` with the string `I rejected!`.
+
+In our example, myFirstPromise resolves or rejects based on a simple condition, but, in practice, promises settle based on the results of asynchronous operations. For example, a database request may fulfill with the data from a query or reject with an error thrown.
+
+### Success and Failure Callback Functions
+To handle a “successful” promise, or a promise that resolved, we invoke `.then()` on the promise, passing in a success handler callback function.
+```
+const prom = new Promise((resolve, reject) => {
+  resolve('Yay!');
+});
+ 
+const handleSuccess = (resolvedValue) => {
+  console.log(resolvedValue);
+};
+ 
+prom.then(handleSuccess); // Prints: 'Yay!'
+```
+
+### Using Catch with Promises
+Remember, `.then()` will return a promise with the same settled value as the promise it was called on if no appropriate handler was provided.
+This implementation allows us to separate our resolved logic from our rejected logic.
+Instead of passing both handlers into one `.then()`, we can chain a second `.then()` with a failure handler to a first `.then()` with a success handler and both cases will be handled.
+```
+// Original
+prom
+  .then((resolvedValue) => {
+    console.log(resolvedValue);
+  })
+  .then(null, (rejectionReason) => {
+    console.log(rejectionReason);
+  });
+
+// Using catch()
+prom
+  .then((resolvedValue) => {
+    console.log(resolvedValue);
+  })
+  .catch((rejectionReason) => {
+    console.log(rejectionReason);
+  });
+```
+
+The `.catch()` function takes only one argument, `onRejected`.
+In the case of a rejected promise, this failure handler will be invoked with the reason for rejection.
+Using `.catch()` accomplishes the same thing as using a `.then()` with only a failure handler.
+
+### Chaining Multiple Promises
+One common pattern we’ll see with asynchronous programming is multiple operations which depend on each other to execute or that must be executed in a certain order.
+We might make one request to a database and use the data returned to us to make another request.
+
+This process of chaining promises together is called composition.
+Promises are designed with composition in mind. Here’s a simple promise chain in code:
+```
+firstPromiseFunction()
+.then((firstResolveVal) => {
+  return secondPromiseFunction(firstResolveVal);
+})
+.then((secondResolveVal) => {
+  console.log(secondResolveVal);
+});
+```
+
+### Common Promise Mistakes
+Mistake 1: Nesting promises instead of chaining them.
+```
+returnsFirstPromise()
+.then((firstResolveVal) => {
+  return returnsSecondValue(firstResolveVal)
+    .then((secondResolveVal) => {
+      console.log(secondResolveVal);
+    })
+})
+```
+Instead of having a clean chain of promises, we’ve nested the logic for one inside the logic of the other.
 
 
+Mistake 2: Forgetting to `return` a promise.
+```
+returnsFirstPromise()
+.then((firstResolveVal) => {
+  returnsSecondValue(firstResolveVal)
+})
+.then((someVal) => {
+  console.log(someVal);
+})
+```
+Since forgetting to return our promise won’t throw an error, this can be a really tricky thing to debug.
 
+Example of Bad vs. Good:
+```
+const {checkInventory, processPayment, shipOrder} = require('./library.js');
 
+const order = {
+  items: [['sunglasses', 1], ['bags', 2]],
+  giftcardBalance: 79.82
+};
+
+// BAD:
+/*checkInventory(order)
+    .then((resolvedValueArray) => {
+        processPayment(resolvedValueArray)
+            .then((resolvedValueArray) => {
+                shipOrder(resolvedValueArray)
+                    .then((successMessage) => {
+                        console.log(successMessage);
+                    });
+            });
+    });
+*/
+
+// GOOD:
+checkInventory(order)
+  .then((resolvedValueArray) => {
+    return processPayment(resolvedValueArray);
+  })
+  .then((resolvedValueArray) => {
+    return shipOrder(resolvedValueArray);
+  })
+  .then((successMessage) => {
+    console.log(successMessage);
+  });
+```
+
+### Promise.all
+Useful if dealing with multiple Promises, but the order doesn't matter. Useful for maximizing efficiency.
+Also known as concurrency.
+
+`Promise.all()` accepts an array of promises as its argument and returns a single promise. That single promise will settle in one of two ways:
+
+1. If every promise in the argument array resolves, the single promise returned from `Promise.all()` will resolve with an array containing the resolve value from each promise in the argument array.
+2. If any promise from the argument array rejects, the single promise returned from `Promise.all()` will immediately reject with the reason that promise rejected. This behavior is sometimes referred to as failing fast.
+
+```
+let myPromises = Promise.all([returnsPromOne(), returnsPromTwo(), returnsPromThree()]);
+ 
+myPromises
+  .then((arrayOfValues) => {
+    console.log(arrayOfValues);
+  })
+  .catch((rejectionReason) => {
+    console.log(rejectionReason);
+  });
+```
+1. We declare `myPromises` assigned to invoking `Promise.all()`.
+2. We invoke `Promise.all()` with an array of three promises— the returned values from functions.
+3. We invoke `.then()` with a success handler which will print the array of resolved values if each promise resolves successfully.
+4. We invoke `.catch()` with a failure handler which will print the first rejection message if any promise rejects.
+
+## Async
+The `async` keyword is used to write functions that handle asynchronous actions. We wrap our asynchronous logic inside a function prepended with the `async` keyword. Then, we invoke that function.
+
+`async` functions always return a promise. This means we can use traditional promise syntax, like `.then()` and `.catch` with our `async` functions.
+
+An `async` function will return in one of three ways:
+1. If there’s nothing returned from the function, it will return a promise with a resolved value of `undefined`.
+2. If there’s a non-promise value returned from the function, it will return a promise resolved to that value.
+3. If a promise is returned from the function, it will simply return that promise
+
+```
+// Not using Async:
+function withConstructor(num){
+  return new Promise((resolve, reject) => {
+    if (num === 0){
+      resolve('zero');
+    } else {
+      resolve('not zero');
+    }
+  });
+}
+
+withConstructor(0)
+  .then((resolveValue) => {
+  console.log(` withConstructor(0) returned a promise which resolved to: ${resolveValue}.`);
+});
+
+// Same as above, except using Async:
+async function withAsync(num) {
+  if(num === 0){
+    return 'zero';
+  } else {
+    return 'not zero';
+  }
+}
+ 
+withAsync(0)
+.then(resolvedValue => {
+    console.log(resolvedValue);
+  })  // 'zero' or 'not zero' based on input
+```
+
+### Await Operator
+The `await` keyword halts the execution of an async function until a promise is no longer pending.
+
+`getBeans()` is missing the keywords `async` and `await`.
+The keyword `async` should precede the `function` keyword, and the `await` operator precedes a promise.
+Remember that in our case, this is the promise returned from `shopForBeans()`
+
+```
+const shopForBeans = require('./library.js');
+
+// Async goes before the function keyword
+async function getBeans() {
+  console.log(`1. Heading to the store to buy beans...`);
+  let value = await shopForBeans(); // Await goes before the object that returns the promise
+  console.log(`3. Great! I'm making ${value} beans for dinner tonight!`);
+}
+
+getBeans();
+```
+
+### Handling Dependent Promises using Async and Await
+The true beauty of `async...await` is when we have a series of asynchronous actions which depend on one another.
+For example, we may make a network request based on a query to a database.
+In that case, we would need to wait to make the network request until we had the results from the database.
+With native promise syntax, we use a chain of `.then()` functions making sure to return correctly each one:
+```
+function nativePromiseVersion() {
+  returnsFirstPromise()
+    .then((firstValue) => {
+      console.log(firstValue);
+      return returnsSecondPromise(firstValue);
+    })
+   .then((secondValue) => {
+      console.log(secondValue);
+    });
+}
+```
+1. Within our function we use two functions which return promises: `returnsFirstPromise()` and `returnsSecondPromise()`.
+2. We invoke `returnsFirstPromise()` and ensure that the first promise resolved by using `.then()`.
+3. In the callback of our first `.then()`, we log the resolved value of the first promise, `firstValue`, and then return `returnsSecondPromise(firstValue)`.
+4. We use another `.then()` to print the second promise’s resolved value to the console.
+
+Here’s how we’d write an async function to accomplish the same thing:
+```
+async function asyncAwaitVersion() {
+  let firstValue = await returnsFirstPromise();
+  console.log(firstValue);
+  let secondValue = await returnsSecondPromise(firstValue);
+  console.log(secondValue);
+}
+```
+1. We mark our function as `async`.
+2. Inside our function, we create a variable `firstValue` assigned await `returnsFirstPromise()`. This means `firstValue` is assigned the resolved value of the awaited promise.
+3. Next, we log `firstValue` to the console.
+4. Then, we create a variable `secondValue` assigned to `await` `returnsSecondPromise(firstValue)`. Therefore, `secondValue` is assigned this promise’s resolved value.
+5. Finally, we log `secondValue` to the console.
+
+```
+async function makeBeans() {
+ const type = await shopForBeans();
+ const isSoft = await soakTheBeans(type);
+ const dinner = await cookTheBeans(isSoft);
+ console.log(dinner);
+}
+
+makeBeans();
+```
+
+### Handling Errors
+With `async...await` we use `try...catch` statements for error handling. Catches both asynchronous and synchronous errors.
+```
+async function usingTryCatch() {
+ try {
+   let resolveValue = await asyncFunction('thing that will fail');
+   let secondValue = await secondAsyncFunction(resolveValue);
+ } catch (err) {
+   // Catches any errors in the try block
+   console.log(err);
+ }
+}
+ 
+usingTryCatch();
+```
+
+### Handling Independent Promises
+Remember that `await` halts the execution of our `async` function.
+This allows us to conveniently write synchronous-style code to handle dependent promises.
+But what if our `async` function contains multiple promises which are not dependent on the results of one another to execute?
+```
+async function waiting() {
+ const firstValue = await firstAsyncThing();
+ const secondValue = await secondAsyncThing();
+ console.log(firstValue, secondValue);
+}
+ 
+async function concurrent() {
+ const firstPromise = firstAsyncThing();
+ const secondPromise = secondAsyncThing();
+console.log(await firstPromise, await secondPromise);
+}
+```
+In the `waiting()` function, we pause our function until the first promise resolves, then we construct the second promise.
+Once that resolves, we print both resolved values to the console.
+
+In our `concurrent()` function, both promises are constructed without using `await`. We then `await` each of their resolutions to print them to the console.
+
+With our `concurrent()` function both promises’ asynchronous operations can be run simultaneously. If possible, we want to get started on each asynchronous operation as soon as possible! Within our `async` functions we should still take advantage of concurrency, the ability to perform asynchronous actions at the same time.
+
+Note: if we have multiple truly independent promises that we would like to execute fully in parallel, we must use individual `.then()` functions and avoid halting our execution with `await`.
+
+```
+// app.js
+let {cookBeans, steamBroccoli, cookRice, bakeChicken} = require('./library.js');
+
+// Write your code below:
+async function serveDinner(){
+  let vegetablePromise = steamBroccoli();
+  let starchPromise = cookRice();
+  let proteinPromise = bakeChicken();
+  let sidePromise = cookBeans();
+
+  console.log(`Dinner is served. We're having ${await vegetablePromise}, ${await starchPromise}, ${await proteinPromise}, and ${await sidePromise}.`);
+}
+
+serveDinner();
+```
+```
+// library.js
+let cookBeans = () => {
+  return new Promise ((resolve, reject) => {
+   setTimeout(()=>{
+     resolve('beans');
+   }, 1000);
+ });
+}
+
+let steamBroccoli = () => {
+ return new Promise ((resolve, reject) => {
+   setTimeout(()=>{
+     resolve('broccoli');
+   }, 1000);
+ });
+}
+
+let cookRice = () => {
+ return new Promise ((resolve, reject) => {
+   setTimeout(()=>{
+     resolve('rice');
+   }, 1000);
+ });
+}
+
+let bakeChicken = () => {
+ return new Promise ((resolve, reject) => {
+   setTimeout(()=>{
+     resolve('chicken');
+   }, 1000);
+ });
+}
+
+module.exports = {cookBeans, steamBroccoli, cookRice, bakeChicken};
+```
+
+### Await Promise.all
+Another way to take advantage of concurrency when we have multiple promises which can be executed simultaneously is to `await` a `Promise.all()`.
+
+We can pass an array of promises as the argument to `Promise.all()`, and it will return a single promise. This promise will resolve when all of the promises in the argument array have resolved. This promise’s resolve value will be an array containing the resolved values of each promise from the argument array.
+```
+async function asyncPromAll() {
+  const resultArray = await Promise.all([asyncTask1(), asyncTask2(), asyncTask3(), asyncTask4()]);
+  for (let i = 0; i < resultArray.length; i++){
+    console.log(resultArray[i]); 
+  }
+}
+```
+In our above example, we await the resolution of a `Promise.all()`. This `Promise.all()` was invoked with an argument array containing four promises (returned from required-in functions). Next, we loop through our resultArray, and log each item to the console. The first element in `resultArray` is the resolved value of the `asyncTask1()` promise, the second is the value of the `asyncTask2()` promise, and so on.
+
+`Promise.all()` allows us to take advantage of asynchronicity— each of the four asynchronous tasks can process concurrently. `Promise.all()` also has the benefit of failing fast, meaning it won’t wait for the rest of the asynchronous actions to complete once any one has rejected. As soon as the first promise in the array rejects, the promise returned from `Promise.all()` will reject with that reason. As it was when working with native promises, `Promise.all()` is a good choice if multiple asynchronous tasks are all required, but none must wait for any other before executing.
+
+```
+// app.js
+let {cookBeans, steamBroccoli, cookRice, bakeChicken} = require('./library.js');
+
+// Write your code below:
+async function serveDinnerAgain(){
+  let foodArray = await Promise.all([steamBroccoli(), cookRice(), bakeChicken(), cookBeans()]);
+  console.log(`Dinner is served. We're having ${foodArray[0]}, ${foodArray[1]}, ${foodArray[2]}, and ${foodArray[3]}.`);
+}
+
+serveDinnerAgain();
+```
+```
+// library.js
+let cookBeans = () => {
+  return new Promise ((resolve, reject) => {
+   setTimeout(()=>{
+     resolve('beans');
+   }, 1000);
+ });
+};
+
+let steamBroccoli = () => {
+ return new Promise ((resolve, reject) => {
+   setTimeout(()=>{
+     resolve('broccoli');
+   }, 1000);
+ });
+};
+
+let cookRice = () => {
+ return new Promise ((resolve, reject) => {
+   setTimeout(()=>{
+     resolve('rice');
+   }, 1000);
+ });
+};
+
+let bakeChicken = () => {
+ return new Promise ((resolve, reject) => {
+   setTimeout(()=>{
+     resolve('chicken');
+   }, 1000);
+ });
+};
+
+module.exports = {cookBeans, steamBroccoli, cookRice, bakeChicken};
+```
+
+## Requests
+Four most common [HTTP Requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods):
+1. GET - Use JavaScript's XHR object
+2. POST - Use JavaScript's XHR object
+3. PUT
+4. DELETE
+
+One of JavaScript’s greatest assets is its non-blocking properties, or that it is an asynchronous language. JavaScript uses an event loop to handle asynchronous function calls.
+
+[MDN Documentation: Event Loop](https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop)
+
+### XHR GET Requests
+Asynchronous JavaScript and XML (AJAX), enables requests to be made after the initial page load.
+Initially, AJAX was used only for XML formatted data, now it can be used to make requests that have many different formats.
+
+[XHR GET diagram](https://content.codecademy.com/courses/intermediate-javascript-requests/diagrams/XHR%20GET%20diagram.svg)
+
+### XHR POST Requests
+[XHR POST diagram](https://content.codecademy.com/courses/intermediate-javascript-requests/diagrams/XHR%20POST%20diagram.svg)
+
+### Datamuse API
+[Datamuse API Documentation](https://www.datamuse.com/api/)
+
+### Rebrandly URL Shortener API
+[How to Generate an API key to use the Rebrandly URL Shortener API](https://www.codecademy.com/articles/rebrandly-signup)
+
+### Async GET and POST Requests
+[async/await GET diagram](https://content.codecademy.com/courses/intermediate-javascript-requests/diagrams/async%20await%20GET%20diagram.svg)
+
+Key points:
+
+1. Using an `async` function that will return a promise.
+2. `await` can only be used in an `async` function. `await` allows a program to run while waiting for a promise to resolve.
+3. In a `try...catch` statement, code in the `try` block will be run and in the event of an exception/error, the code in the `catch` statement will run.
+
+```
+// Boilerplate Async GET Request
+const getData = async () => {
+  try {
+    const response = await fetch('https://api-to-call.com/endpoint');
+    if(response.ok){
+      const jsonResponse = await response.json();
+      return jsonResponse;
+    }
+    throw new Error('Request failed!');
+  } catch (error) {
+    console.log(error);
+  }
+};
+```
+```
+// Boilerplate Async POST request
+const getData = async ()  => {
+    try {
+    const response = await fetch("https://api-to-call.com/endpoint", {
+      method: 'POST',
+      body: JSON.stringify({id: 200})
+    });
+    if (response.ok) {
+      const jsonResponse = await response.json()
+      return jsonResponse;
+    }
+    throw new Error('Request failed!');
+  } catch (error)  {
+    console.log(error)
+  }
+};
+```
+
+# How HTTP and TCP Works
+Original article: [HTTP & TCP](https://www.codecademy.com/courses/introduction-to-javascript/articles/http-requests)
